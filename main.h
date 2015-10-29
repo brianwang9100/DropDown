@@ -12,5 +12,26 @@ typedef struct {
 	u16 color;
 } MAINCHAR;
 
+typedef struct {
+	int row;
+	int col;
+	int deltar;
+	int deltac;
+	int width;
+	int height;
+	u16 color;
+} GOAL;
+
+typedef GOAL COLORBLOCK;
+
+enum GBAState {
+	START_SCENE,
+	START_SCENE_NODRAW,
+	MAIN_SCENE,
+	MAIN_SCENE_NODRAW,
+	END_SCENE,
+	END_SCENE_NODRAW
+};
+
 int main(void);
 void updateChar(MAINCHAR *mainChar);
