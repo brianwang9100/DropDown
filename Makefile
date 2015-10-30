@@ -7,11 +7,11 @@
 # The name of your desired GBA game
 # This should be a just a name i.e MyFirstGBAGame
 # No SPACES AFTER THE NAME.
-PROGNAME = DROPSMASH
+PROGNAME = RGBDROP
 
 # The object files you want to compile into your program
 # This should be a space (SPACE!) separated list of .o files
-OFILES = main.o mylib.o
+OFILES = main.o mylib.o font.o
 
 # The header files you have created.
 # This is necessary to determine when to recompile for files.

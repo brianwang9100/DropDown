@@ -13,6 +13,7 @@ typedef struct {
 } MAINCHAR;
 
 typedef struct {
+	int set;
 	int row;
 	int col;
 	int deltar;
@@ -34,4 +35,5 @@ enum GBAState {
 };
 
 int main(void);
-void updateChar(MAINCHAR *mainChar);
+void updateChar(MAINCHAR *mainChar, GOAL *goals);
+void updateGoal(GOAL *goal);

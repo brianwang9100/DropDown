@@ -1,13 +1,17 @@
 #include "main.h"
+#include <stdlib.h>
 #include <stdio.h>
+#define GOALSSIZE 3
 
 static int framecounter = 0;
 static int drop = 0;
 //static enum GBAState state = START_SCENE;
-static int lastspeed;
+static int lastspeed = 0;
+static int goalcounter = 0;
+static int score = 0;
 
 static unsigned short LAST_A = 0;
-//static unsigned short LAST_B = 0;
+static unsigned short LAST_B = 0;
 //static unsigned short LAST_SELECT = 0;
 //static unsigned short LAST_START = 0;
 //static unsigned short LAST_RIGHT = 0;
@@ -19,37 +23,109 @@ static unsigned short LAST_A = 0;
 
 int main(void) {
 	REG_DISPCTL	= MODE3 | BG2_ENABLE;
-	MAINCHAR mainChar = {40, 40, 0, 0, 10, WHITE};
+	MAINCHAR mainChar = {40, 40, 0, 0, 10, BLACK};
 	MAINCHAR oldChar = mainChar;
-	//GOAL goals[];
-	//GOAL oldgoals[];	
+
+	u16 colors[] = {RED, GREEN, BLUE};
+	int nextcolor = 0;
+
+	GOAL goal1 = {0, 0, 0, 0, 0, 0, 0, WHITE};
+	GOAL goal2 = {0, 0, 0, 0, 0, 0, 0, WHITE};
+	GOAL goal3 = {0, 0, 0, 0, 0, 0, 0, WHITE};
+
+	GOAL goals[GOALSSIZE] = {goal1, goal2, goal3};
+	GOAL oldgoals[GOALSSIZE];
+	GOAL *goalpointer = goals;
+	GOAL *oldcur;
+	GOAL *cur;
+	//write 0 on top right
+	drawString(0,0, "0", WHITE);	
 	//draw ground
 	drawRect(HEIGHTMAX + 1, 0, 240, 160 - HEIGHTMAX, LTGRAY); 
 	while(1) {
 		waitForVblank();
 		//update framecounter
 		framecounter++;
+		goalcounter++;
+
 		//update oldChar
 		oldChar = mainChar;
-		if (KEY_DOWN_NOW(BUTTON_A) && !LAST_A) {
+		for (int i = 0; i < GOALSSIZE; i++) {
+			oldgoals[i] = goals[i];
+		}
+		
+		//check null goals
+		if (goalcounter >= 120) {
+			if (!(goalpointer->set)) {
+				goalpointer->set = 1;
+				goalpointer->row = HEIGHTMAX/4 + rand()%(HEIGHTMAX*3/4) - 20;
+				goalpointer->col = 240 - 5;
+				goalpointer->deltar = -1 + rand()%2;
+				goalpointer->deltac = -1*(rand()%3 + 1);
+				goalpointer->width = 5;
+				goalpointer->height = 10 + rand()%16;
+				goalpointer->color = colors[rand()%3];
+				goalpointer++;
+				if (goalpointer == &goals[GOALSSIZE]) {
+					goalpointer = goals;
+				}
+			}
+			goalcounter = 0;
+		}
+		//control mechanism
+		if (KEY_DOWN_NOW(BUTTON_A) && !LAST_A && lastspeed) {
 			drop = 1;
 			mainChar.deltar = 30;
 		}
+		if (KEY_DOWN_NOW(BUTTON_B) && !LAST_B && lastspeed) {
+			mainChar.color = colors[nextcolor];
+			nextcolor++;
+			if (nextcolor == 3) {
+				nextcolor = 0;
+			}
+		}
 		//update gravity
-		if (framecounter >= 6) {
+		if (framecounter >= 8) {
 			if (!drop) {
 				mainChar.deltar = mainChar.deltar + GRAVITY;
 			}
 			framecounter = 0;
 		}
-		updateChar(&mainChar);
+		//update objects
+		for (int i = 0; i < GOALSSIZE; i++) {
+			if (goals[i].set) {
+				updateGoal(&goals[i]);
+			}
+		}
+		updateChar(&mainChar, goals);
 		//drawing
+		for (int i = 0; i < GOALSSIZE; i++) {
+			oldcur = oldgoals + i;
+			if (oldcur->set) {
+				drawRect(oldcur->row,
+						oldcur->col,
+						oldcur->width,
+						oldcur->height,
+						BLACK);
+			}
+		}
+		for (int i = 0; i < GOALSSIZE; i++) {
+			cur = goals + i;
+			if (cur->set && cur->color != BLACK) {	
+				drawRect(cur->row,
+						cur->col,
+						cur->width,
+						cur->height,
+						cur->color);
+			}
+		}
 		drawRect(oldChar.row, oldChar.col, oldChar.size, oldChar.size, BLACK);
-		drawRect(mainChar.row, mainChar.col, mainChar.size, mainChar.size, mainChar.color);
+		drawRect(mainChar.row, mainChar.col, mainChar.size, mainChar.size, mainChar.color);	
+		drawHollowRect(mainChar.row, mainChar.col, mainChar.size, mainChar.size, WHITE);	
 
 		//check last button
 		LAST_A = KEY_DOWN_NOW(BUTTON_A); 
-    	//LAST_B = KEY_DOWN_NOW(BUTTON_B); 
+    	LAST_B = KEY_DOWN_NOW(BUTTON_B); 
     	//LAST_SELECT = KEY_DOWN_NOW(BUTTON_SELECT); 
     	//LAST_START = KEY_DOWN_NOW(BUTTON_START);
     	//LAST_RIGHT = KEY_DOWN_NOW(BUTTON_RIGHT);
@@ -62,12 +138,12 @@ int main(void) {
 	return 0;
 }
 
-void updateChar(MAINCHAR *mainChar) {
+void updateChar(MAINCHAR *mainChar, GOAL *goals) {
 	mainChar->row = mainChar->row + mainChar->deltar;
 	mainChar->col = mainChar->col + mainChar->deltac;
 	
 	//upperbound
-	if (mainChar->row < 0) {
+	if (mainChar->row <= 0) {
 		mainChar->row = 0;
 		mainChar->deltar = 0;
 		framecounter = 0;
@@ -84,7 +160,42 @@ void updateChar(MAINCHAR *mainChar) {
 			mainChar->deltar = -mainChar->deltar;
 		}
 	}
-
+	GOAL *cur;
+	for (int i = 0; i < GOALSSIZE; i++) {
+		cur = goals + i;
+		//check topleft
+		if (((mainChar->col + mainChar->size) > cur->col && (mainChar->row + mainChar->size) > cur->row && mainChar->col < cur->col && mainChar->row < cur->row)
+				|| ((mainChar->col + mainChar->size) > cur-> col && mainChar->row < (cur->row + cur->height) && mainChar->col < cur->col && (mainChar->row + mainChar->size) > (cur->row + cur->height))
+				|| (mainChar->col < (cur->col + cur->width) && (mainChar->row + mainChar->size) > cur->row && (mainChar->col + mainChar->size) > (cur->col + cur->width) && mainChar->row < cur->row)
+				|| (mainChar->col < (cur->col + cur->width) && mainChar->row < (cur->row + cur->height)&& (mainChar->col + mainChar->size) > (cur->col + cur->width) && (mainChar->row + mainChar->size) > (cur->row + cur->height))
+				|| (mainChar->col < cur->col && (mainChar->col+ mainChar->size) > cur->col + cur->width && (((mainChar->row + mainChar->size) > cur->row && mainChar->row < cur->row) || (mainChar->row < (cur->row + cur-> height) && (mainChar->row + mainChar->size) > (cur->row + cur->height))))) {
+			if (cur->color == mainChar->color) {
+				cur->color = BLACK;	
+				score++;
+				char buffer[10];
+				sprintf(buffer, "%i", score - 1);
+				drawString(0,0, buffer, BLACK);
+				sprintf(buffer, "%i", score);
+				drawString(0,0, buffer, WHITE);	
+			} else {
+				//gameover
+			}
+		}
+	}
 }
 
-
+void updateGoal(GOAL *goal) {	
+	goal->row = goal->row + goal->deltar;
+	goal->col = goal->col + goal->deltac;
+	if (goal->col <= 0) {
+		goal->set = 0;
+	}
+	if (goal->row <= 0) {
+		goal->row = 0;
+		goal->deltar = -goal->deltar;
+	}
+	if (goal->row > HEIGHTMAX - goal->height + 1) {
+		goal->row = HEIGHTMAX - goal->height + 1;
+		goal->deltar = -goal->deltar;
+	}
+}
