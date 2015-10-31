@@ -1,6 +1,10 @@
 #include "mylib.h"
+#include "ground.h"
+#include "startscene.h"
+#include "endscene.h"
 #define HEIGHTMAX 149
 #define GRAVITY 1
+#define GOALSSIZE 3
 extern u16 *videoBuffer;
 
 typedef struct {

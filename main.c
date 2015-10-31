@@ -1,7 +1,6 @@
 #include "main.h"
 #include <stdlib.h>
 #include <stdio.h>
-#define GOALSSIZE 3
 
 static int framecounter = 0;
 static int drop = 0;
@@ -43,8 +42,7 @@ int main(void) {
 	while(1) {
 		switch(state) {
 			case START_SCENE:
-				fillScreen(BLACK);
-				drawString(0,0, "START SCREEN", WHITE);
+				drawImage3(0, 0, STARTSCENE_WIDTH, STARTSCENE_HEIGHT, startscene);
 				state = START_SCENE_NODRAW;
 				break;
 			case START_SCENE_NODRAW:
@@ -86,7 +84,8 @@ int main(void) {
 				drawString(16, 0, "PRESS B TO CHANGE COLORS", WHITE);	
 				//draw ground
 				//fillScreen(PINK);
-				drawRect(HEIGHTMAX + 1, 0, 240, 160 - HEIGHTMAX, LTGRAY); 
+				//drawRect(HEIGHTMAX + 1, 0, 240, 160 - HEIGHTMAX, LTGRAY); 
+				drawImage3(HEIGHTMAX+1, 0, GROUND_WIDTH, GROUND_HEIGHT, ground);
 				state = MAIN_SCENE;
 				break;
 			case MAIN_SCENE:	
@@ -182,8 +181,10 @@ int main(void) {
 				drawHollowRect(mainChar.row, mainChar.col, mainChar.size, mainChar.size, WHITE);	
 				break;
 			case END_SCENE:	
-				fillScreen(BLACK);
-				drawString(0,0, "GAMEOVER", WHITE);
+				drawImage3(0, 0, ENDSCENE_WIDTH, ENDSCENE_HEIGHT, endscene);
+				char buffer[10];
+				sprintf(buffer, "SCORE: %i", score);
+				drawString(10, 95, buffer, WHITE);
 				state = END_SCENE_NODRAW;
 				break;
 			case END_SCENE_NODRAW:
@@ -214,13 +215,6 @@ void updateChar(MAINCHAR *mainChar, GOAL *goals) {
 	mainChar->row = mainChar->row + mainChar->deltar;
 	mainChar->col = mainChar->col + mainChar->deltac;
 	
-	//upperbound
-	//if (mainChar->row <= 0) {
-	//	mainChar->row = 0;
-	//	mainChar->deltar = 0;
-	//	framecounter = 0;
-	//}
-	//lowerbound
 	if(mainChar->row > HEIGHTMAX - mainChar->size + 1) {
 		mainChar->row = HEIGHTMAX - mainChar->size + 1;
 		framecounter = 0;
@@ -235,14 +229,16 @@ void updateChar(MAINCHAR *mainChar, GOAL *goals) {
 	GOAL *cur;
 	for (int i = 0; i < GOALSSIZE; i++) {
 		cur = goals + i;
-		//check topleft
 		if (((mainChar->col + mainChar->size) > cur->col && (mainChar->row + mainChar->size) > cur->row && mainChar->col < cur->col && mainChar->row < cur->row)
 				|| ((mainChar->col + mainChar->size) > cur-> col && mainChar->row < (cur->row + cur->height) && mainChar->col < cur->col && (mainChar->row + mainChar->size) > (cur->row + cur->height))
 				|| (mainChar->col < (cur->col + cur->width) && (mainChar->row + mainChar->size) > cur->row && (mainChar->col + mainChar->size) > (cur->col + cur->width) && mainChar->row < cur->row)
 				|| (mainChar->col < (cur->col + cur->width) && mainChar->row < (cur->row + cur->height)&& (mainChar->col + mainChar->size) > (cur->col + cur->width) && (mainChar->row + mainChar->size) > (cur->row + cur->height))
 				|| (mainChar->col < cur->col && (mainChar->col+ mainChar->size) > cur->col + cur->width && (((mainChar->row + mainChar->size) > cur->row && mainChar->row < cur->row) || (mainChar->row < (cur->row + cur-> height) && (mainChar->row + mainChar->size) > (cur->row + cur->height))))) {
-			if (cur->color == mainChar->color) {
-				cur->color = BLACK;	
+			if (cur->color == mainChar->color && cur->color != BLACK && cur->set) {
+				cur->color = BLACK;
+				cur->set = 0;
+				cur->col = 0;
+				cur->row =0;
 				score++;
 				char buffer[10];
 				sprintf(buffer, "%i", score - 1);
