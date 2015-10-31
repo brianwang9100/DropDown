@@ -1,4 +1,5 @@
 typedef unsigned short u16;
+typedef unsigned int u32;
 #define SCANLINECOUNTER *(volatile u16 *)0x4000006
 extern u16 *videoBuffer;
 extern const unsigned char fontdata_6x8[122288];
@@ -80,6 +81,8 @@ typedef struct{
 void setPixel(int r, int c, u16 color);
 void drawRect(int r, int c, int width, int height, u16 color);
 void drawHollowRect(int r, int c, int width, int height, u16 color);
+void fillScreen(volatile u16 color);
+void fillScreenWithPicture(const u16 *image);
 void drawImage3(int r, int c, int width, int height, const u16* image);
 void drawString(int r, int c, char *str, u16 color);
 void drawChar(int r, int c, char ch, u16 color);
