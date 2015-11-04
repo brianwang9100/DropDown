@@ -233,7 +233,8 @@ void updateChar(MAINCHAR *mainChar, GOAL *goals) {
 				|| ((mainChar->col + mainChar->size) > cur-> col && mainChar->row < (cur->row + cur->height) && mainChar->col < cur->col && (mainChar->row + mainChar->size) > (cur->row + cur->height))
 				|| (mainChar->col < (cur->col + cur->width) && (mainChar->row + mainChar->size) > cur->row && (mainChar->col + mainChar->size) > (cur->col + cur->width) && mainChar->row < cur->row)
 				|| (mainChar->col < (cur->col + cur->width) && mainChar->row < (cur->row + cur->height)&& (mainChar->col + mainChar->size) > (cur->col + cur->width) && (mainChar->row + mainChar->size) > (cur->row + cur->height))
-				|| (mainChar->col < cur->col && (mainChar->col+ mainChar->size) > cur->col + cur->width && (((mainChar->row + mainChar->size) > cur->row && mainChar->row < cur->row) || (mainChar->row < (cur->row + cur-> height) && (mainChar->row + mainChar->size) > (cur->row + cur->height))))) {
+				|| (mainChar->col < cur->col && (mainChar->col+ mainChar->size) > cur->col + cur->width && (((mainChar->row + mainChar->size) > cur->row && mainChar->row < cur->row) || (mainChar->row < (cur->row + cur-> height) && (mainChar->row + mainChar->size) > (cur->row + cur->height))))
+				|| (mainChar->col < cur->col && (mainChar->col + mainChar->size) > cur->col && mainChar->row > cur->row && (mainChar->row + mainChar->size) < (cur->row + cur->height))) {
 			if (cur->color == mainChar->color && cur->color != BLACK && cur->set) {
 				cur->color = BLACK;
 				cur->set = 0;
