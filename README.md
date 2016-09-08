@@ -7,11 +7,12 @@
 ![image](RGBDROPscreen2.png)
 
 ### CONTROLS
-| ----- | --------------|
+| ----- | ------------- |
 |START 	| start game    |
 |SELECT	| restart game  |
 |A      | speed drop    |
 |B      | change colors |
+| ----- | ------------- |
 
 ### OBJECTIVE 
 Gain the highest score by hitting colored rectangles with your character that correspond to your character's current color while dodging the rectangles that are not your current color.
