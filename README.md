@@ -1,34 +1,34 @@
 # RGBDROP
 ### GameBoyGame for CS2110
 
+![image](RGBDropDemo.gif)
 ![image](RGBDROPscreen1.png)
 ![image](RGBDROPscreen3.png)
 ![image](RGBDROPscreen2.png)
 
 ### CONTROLS
-- START 	| START GAME
-- SELECT	| RESTART GAME
-- A		| SPEED DROP
-- B		| CHANGE COLORS
+| ----- | --------------|
+|START 	| start game    |
+|SELECT	| restart game  |
+|A      | speed drop    |
+|B      | change colors |
 
 ### OBJECTIVE 
-GAIN THE HIGHEST SCORE BY HITTING COLORED RECTANGLES WITH YOUR CHARACTER THAT CORRESPOND TO YOUR CHARACTER'S CURRENT COLOR WHILE DODGING THE RECTANGLES THAT ARE NOT YOUR CURRENT COLOR.
+Gain the highest score by hitting colored rectangles with your character that correspond to your character's current color while dodging the rectangles that are not your current color.
 
-FOR EXAMPLE:
-- HITTING A GREEN RECTANGLE WHILE YOUR CHARACTER IS GREEN WILL GIVE YOU A POINT.
-- HITTING A GREEN RECTANLGE WHILE YOUR CHARACTER IS NOT GREEN WILL END THE GAME.
+For Example:
+- Hitting a green rectangle while your character is green will give you a point.
+- Hitting a green rectanlge while your character is not green will end the game.
 
-YOUR CHARACTER WILL BOUNCE UP AND DOWN IN A GIVEN PATH UNLESS YOU PRESS A, WHICH DROPS YOUR CHARACTER SUPER AT AN ACCELLERATED PACE UNTIL IT COLLIDES WITH THE GROUND.
+Your character will bounce up and down in a given path unless you press a, which drops your character super at an accellerated pace until it collides with the ground.
 
-YOU SWITCH THROUGH COLORS EVERY TIME YOU PRESS B, FROM RED -> GREEN -> BLUE, AND THEN BACK TO RED AGAIN.
+You switch through colors every time you press b, from red -> green -> blue, and then back to red again.
 
-NOTE: YOU CANNOT MOVE YOUR CHARACTER LEFT OR RIGHT. THIS IS A FEATURE NOT A BUG.
+Note: you cannot move your character left or right. this is a feature not a bug.
 
-ENJOY!
+Enjoy!
 
-PROGRAMMED IN C WITH TEARS AND SADNESS OVER A MILLION BUGS
-- "WAIT WHAT DO YOU MEAN SIZEOF DOESN"T WORK FOR SIZES OF ARRAYS?"
-- "WHAT THE HELL IS THE DIFFERENCE BETWEEN -> AND . ???"
+Programmed in C with tears and sadness
 
 ### Running the game
 To run it, download the RGBDROP.gba file. You need to download a VBA-M emulator and run the RGBDROP.gba file.
